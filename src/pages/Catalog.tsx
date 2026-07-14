@@ -3,10 +3,25 @@ import products from '../data/products.json'
 import { filterProducts, sortProducts } from '../utils/catalog'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
+import Select from '../components/Select'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
-const CATEGORIES = ['all', 'outerwear', 'hoodies', 'tees', 'pants', 'accessories']
-const SIZES = ['all', 'S', 'M', 'L', 'XL', 'ONE']
+const CATEGORIES = [
+  { value: 'all', label: 'All categories' },
+  { value: 'outerwear', label: 'Outerwear' },
+  { value: 'hoodies', label: 'Hoodies' },
+  { value: 'tees', label: 'Tees' },
+  { value: 'pants', label: 'Pants' },
+  { value: 'accessories', label: 'Accessories' },
+]
+const SIZES = [
+  { value: 'all', label: 'All sizes' },
+  { value: 'S', label: 'S' },
+  { value: 'M', label: 'M' },
+  { value: 'L', label: 'L' },
+  { value: 'XL', label: 'XL' },
+  { value: 'ONE', label: 'ONE' },
+]
 const PRICES = [
   { value: '', label: 'Any price' },
   { value: '50', label: 'Under $50' },
@@ -39,8 +54,6 @@ export default function Catalog() {
     sort,
   )
 
-  const selectCls = 'bg-ink border border-white/20 px-3 py-2 text-xs uppercase tracking-widest focus:border-paper outline-none cursor-pointer'
-
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-28 pb-16">
       <Reveal>
@@ -48,18 +61,12 @@ export default function Catalog() {
       </Reveal>
 
       <div className="mt-8 flex flex-wrap gap-3 items-center">
-        <select aria-label="Category" value={category} onChange={e => setParam('category', e.target.value, 'all')} className={selectCls}>
-          {CATEGORIES.map(c => <option key={c} value={c}>{c === 'all' ? 'All categories' : c}</option>)}
-        </select>
-        <select aria-label="Size" value={size} onChange={e => setParam('size', e.target.value, 'all')} className={selectCls}>
-          {SIZES.map(s => <option key={s} value={s}>{s === 'all' ? 'All sizes' : s}</option>)}
-        </select>
-        <select aria-label="Max price" value={max} onChange={e => setParam('max', e.target.value, '')} className={selectCls}>
-          {PRICES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </select>
-        <select aria-label="Sort" value={sort} onChange={e => setParam('sort', e.target.value, 'new')} className={`${selectCls} ml-auto`}>
-          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
+        <Select label="Category" value={category} options={CATEGORIES} onChange={v => setParam('category', v, 'all')} />
+        <Select label="Size" value={size} options={SIZES} onChange={v => setParam('size', v, 'all')} />
+        <Select label="Max price" value={max} options={PRICES} onChange={v => setParam('max', v, '')} />
+        <div className="ml-auto">
+          <Select label="Sort" value={sort} options={SORTS} onChange={v => setParam('sort', v, 'new')} alignRight />
+        </div>
       </div>
 
       <p className="mt-6 text-xs text-mist uppercase tracking-widest">{shown.length} items</p>

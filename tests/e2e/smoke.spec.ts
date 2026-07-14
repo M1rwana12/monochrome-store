@@ -43,6 +43,22 @@ test('cart persists across reloads', async ({ page }) => {
   await expect(page.getByText('Cart (1)')).toBeVisible()
 })
 
+test('custom category filter updates URL and results', async ({ page }) => {
+  await page.goto('/catalog')
+  await page.getByRole('combobox', { name: 'Category' }).click()
+  await page.getByRole('option', { name: 'Accessories' }).click()
+  await expect(page).toHaveURL(/category=accessories/)
+  await expect(page.getByText('3 items')).toBeVisible()
+})
+
+test('favorites: heart on card adds item to saved page', async ({ page }) => {
+  await page.goto('/catalog')
+  await page.getByRole('button', { name: 'Save item' }).first().click()
+  await page.getByRole('link', { name: 'Saved items' }).click()
+  await expect(page.getByRole('heading', { name: 'Saved' })).toBeVisible()
+  await expect(page.locator('a[href^="/product/"]')).toHaveCount(1)
+})
+
 test('unknown route shows branded 404', async ({ page }) => {
   await page.goto('/nowhere')
   await expect(page.getByText('404')).toBeVisible()

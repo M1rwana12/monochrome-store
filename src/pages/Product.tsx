@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import products from '../data/products.json'
 import { formatPrice } from '../utils/catalog'
 import { useCart } from '../context/CartContext'
@@ -12,13 +12,18 @@ export default function Product() {
   const product = products.find(p => p.id === id)
   useDocumentTitle(product ? product.name : 'Not found')
   const { addItem } = useCart()
-  const [size, setSize] = useState<string | null>(null)
+  const [size, setSize] = useState<string | null>(() =>
+    product && product.sizes.length === 1 ? product.sizes[0] : null,
+  )
   const [error, setError] = useState(false)
+  const [lastId, setLastId] = useState(id)
 
-  useEffect(() => {
+  // Reset selection when navigating between products (adjust-state-during-render pattern)
+  if (id !== lastId) {
+    setLastId(id)
     setSize(product && product.sizes.length === 1 ? product.sizes[0] : null)
     setError(false)
-  }, [product])
+  }
 
   if (!product) {
     return (

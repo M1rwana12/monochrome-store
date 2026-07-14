@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { cartTotal, formatPrice } from '../utils/catalog'
 import products from '../data/products.json'
@@ -58,12 +58,12 @@ export default function CartDrawer() {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <m.div
             className="fixed inset-0 bg-black/60 z-50"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={close}
           />
-          <motion.aside
+          <m.aside
             ref={asideRef}
             className="fixed right-0 top-0 h-full w-full max-w-md bg-coal z-50 flex flex-col"
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
@@ -148,7 +148,7 @@ export default function CartDrawer() {
                 </button>
               </div>
             )}
-          </motion.aside>
+          </m.aside>
         </>
       )}
     </AnimatePresence>

@@ -4,7 +4,7 @@ import products from '../data/products.json'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 
-const campaigns = ['/media/campaign-1.jpg', '/media/campaign-2.jpg', '/media/campaign-3.jpg', '/media/campaign-4.jpg']
+const campaigns = ['/media/campaign-1.webp', '/media/campaign-2.webp', '/media/campaign-3.webp', '/media/campaign-4.webp']
 
 export default function Home() {
   const featured = products.filter(p => p.isNew)
@@ -14,7 +14,7 @@ export default function Home() {
       <section className="relative h-svh overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
-          src="/media/hero.mp4" poster="/media/hero-poster.jpg"
+          src="/media/hero.mp4" poster="/media/hero-poster.webp"
           autoPlay={!reduceMotion} muted loop playsInline preload="metadata"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
+import { track } from '@vercel/analytics'
 import { useCart } from '../context/CartContext'
 import { cartTotal, formatPrice } from '../utils/catalog'
 import products from '../data/products.json'
@@ -58,6 +59,7 @@ export default function CartDrawer() {
 
   const submitOrder = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    track('checkout_completed', { items: items.length, total })
     clear()
     setStage('done')
   }

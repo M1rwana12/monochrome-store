@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import SkeletonImage from '../components/SkeletonImage'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import { SITE_URL } from '../config'
 
 export default function Product() {
   const { id } = useParams<{ id: string }>()
@@ -58,8 +59,29 @@ export default function Product() {
     addItem(product.id, size)
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: product.images.map(src => `${SITE_URL}${src}`),
+    brand: { '@type': 'Brand', name: 'MONOCHROME' },
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/product/${product.id}`,
+      price: product.price,
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-28 pb-16">
+      {/* Static catalog data only; "<" is escaped to prevent </script> breakout */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
         <div className="space-y-4">
           {product.images.map(src => (

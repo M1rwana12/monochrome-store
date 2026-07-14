@@ -4,10 +4,10 @@ import Reveal from '../components/Reveal'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const blocks = [
-  { type: 'video', src: '/media/lookbook-1.mp4', poster: '/media/campaign-1.jpg', caption: 'I. Presence' },
-  { type: 'image', src: '/media/campaign-3.jpg', caption: 'II. Stillness' },
-  { type: 'video', src: '/media/lookbook-2.mp4', poster: '/media/campaign-2.jpg', caption: 'III. Contrast' },
-  { type: 'image', src: '/media/campaign-4.jpg', caption: 'IV. Close' },
+  { type: 'video', src: '/media/lookbook-1.mp4', poster: '/media/campaign-1.webp', caption: 'I. Presence' },
+  { type: 'image', src: '/media/campaign-3.webp', caption: 'II. Stillness' },
+  { type: 'video', src: '/media/lookbook-2.mp4', poster: '/media/campaign-2.webp', caption: 'III. Contrast' },
+  { type: 'image', src: '/media/campaign-4.webp', caption: 'IV. Close' },
 ]
 
 export default function Lookbook() {

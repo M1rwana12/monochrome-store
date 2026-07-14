@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export default function useDocumentTitle(title) {
+export default function useDocumentTitle(title?: string) {
   useEffect(() => {
     document.title = title ? `${title} — MONOCHROME` : 'MONOCHROME'
     return () => {

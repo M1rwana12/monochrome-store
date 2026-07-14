@@ -8,17 +8,17 @@ import Reveal from '../components/Reveal'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function Product() {
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const product = products.find(p => p.id === id)
   useDocumentTitle(product ? product.name : 'Not found')
   const { addItem } = useCart()
-  const [size, setSize] = useState(null)
+  const [size, setSize] = useState<string | null>(null)
   const [error, setError] = useState(false)
 
   useEffect(() => {
     setSize(product && product.sizes.length === 1 ? product.sizes[0] : null)
     setError(false)
-  }, [id])
+  }, [product])
 
   if (!product) {
     return (

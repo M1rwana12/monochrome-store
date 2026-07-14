@@ -1,14 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { cartTotal, formatPrice } from '../utils/catalog'
 import products from '../data/products.json'
 
+type Stage = 'cart' | 'checkout' | 'done'
+
+const FIELDS = [
+  { name: 'name', label: 'Full name', type: 'text' },
+  { name: 'email', label: 'Email', type: 'email' },
+  { name: 'address', label: 'Address', type: 'text' },
+]
+
 export default function CartDrawer() {
   const { items, isOpen, closeCart, setQty, removeItem, clear } = useCart()
-  const [stage, setStage] = useState('cart') // 'cart' | 'checkout' | 'done'
+  const [stage, setStage] = useState<Stage>('cart')
   const total = cartTotal(items, products)
-  const asideRef = useRef(null)
+  const asideRef = useRef<HTMLElement>(null)
 
   const close = () => {
     closeCart()
@@ -17,18 +25,18 @@ export default function CartDrawer() {
 
   useEffect(() => {
     if (!isOpen) return
-    const previouslyFocused = document.activeElement
+    const previouslyFocused = document.activeElement as HTMLElement | null
     const aside = asideRef.current
-    aside?.querySelector('button, input')?.focus()
+    aside?.querySelector<HTMLElement>('button, input')?.focus()
 
-    const onKeyDown = e => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         closeCart()
         setTimeout(() => setStage('cart'), 300)
         return
       }
       if (e.key !== 'Tab' || !aside) return
-      const focusables = aside.querySelectorAll('button, input, a[href]')
+      const focusables = aside.querySelectorAll<HTMLElement>('button, input, a[href]')
       if (!focusables.length) return
       const first = focusables[0]
       const last = focusables[focusables.length - 1]
@@ -48,7 +56,7 @@ export default function CartDrawer() {
     }
   }, [isOpen, closeCart])
 
-  const submitOrder = e => {
+  const submitOrder = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     clear()
     setStage('done')
@@ -116,11 +124,7 @@ export default function CartDrawer() {
 
             {stage === 'checkout' && (
               <form onSubmit={submitOrder} className="flex-1 p-6 space-y-4 overflow-y-auto">
-                {[
-                  { name: 'name', label: 'Full name', type: 'text' },
-                  { name: 'email', label: 'Email', type: 'email' },
-                  { name: 'address', label: 'Address', type: 'text' },
-                ].map(f => (
+                {FIELDS.map(f => (
                   <label key={f.name} className="block text-xs uppercase tracking-widest text-mist">
                     {f.label}
                     <input

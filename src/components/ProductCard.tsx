@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatPrice } from '../utils/catalog'
+import type { Product } from '../types'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product }: { product: Product }) {
   const [main, alt] = product.images
   return (
     <Link to={`/product/${product.id}`} className="group block">

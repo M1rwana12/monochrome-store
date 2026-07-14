@@ -27,7 +27,7 @@ export default function Catalog() {
   const max = params.get('max') || ''
   const sort = params.get('sort') || 'new'
 
-  const setParam = (key, value, defaultValue) => {
+  const setParam = (key: string, value: string, defaultValue: string) => {
     const next = new URLSearchParams(params)
     if (!value || value === defaultValue) next.delete(key)
     else next.set(key, value)

@@ -3,7 +3,14 @@ import { useReducedMotion } from 'framer-motion'
 import Reveal from '../components/Reveal'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
-const blocks = [
+interface LookbookBlock {
+  type: 'video' | 'image'
+  src: string
+  poster?: string
+  caption: string
+}
+
+const blocks: LookbookBlock[] = [
   { type: 'video', src: '/media/lookbook-1.mp4', poster: '/media/campaign-1.webp', caption: 'I. Presence' },
   { type: 'image', src: '/media/campaign-3.webp', caption: 'II. Stillness' },
   { type: 'video', src: '/media/lookbook-2.mp4', poster: '/media/campaign-2.webp', caption: 'III. Contrast' },

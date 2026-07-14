@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import products from '../data/products.json'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
@@ -19,24 +19,24 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
         <div className="relative h-full flex flex-col items-center justify-end pb-24 text-center px-6">
-          <motion.h1
+          <m.h1
             initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="font-display text-4xl sm:text-7xl md:text-8xl tracking-[0.15em] sm:tracking-[0.2em]"
           >
             MONOCHROME
-          </motion.h1>
-          <motion.p
+          </m.h1>
+          <m.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.8 }}
             className="mt-4 text-mist uppercase tracking-[0.4em] text-xs sm:text-sm"
           >
             Cinematic essentials — FW26
-          </motion.p>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.2 }}>
+          </m.p>
+          <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.2 }}>
             <Link to="/catalog" className="mt-8 inline-block border border-paper/40 px-10 py-4 uppercase tracking-[0.3em] text-xs hover:bg-paper hover:text-ink transition-colors">
               Shop the collection
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 

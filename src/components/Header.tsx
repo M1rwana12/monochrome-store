@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useFavorites } from '../context/FavoritesContext'
 
 const nav = [
   { to: '/catalog', label: 'Catalog' },
@@ -8,6 +9,7 @@ const nav = [
 
 export default function Header() {
   const { count, openCart } = useCart()
+  const { count: savedCount } = useFavorites()
   return (
     <header className="fixed top-0 inset-x-0 z-40 mix-blend-difference text-paper">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -26,9 +28,21 @@ export default function Header() {
               {n.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/favorites"
+            aria-label="Saved items"
+            className={({ isActive }) =>
+              `flex items-center gap-1 hover:opacity-60 transition-opacity ${isActive ? 'underline underline-offset-8' : ''}`
+            }
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {savedCount > 0 && <span>{savedCount}</span>}
+          </NavLink>
           <button
             onClick={openCart}
-            className="hover:opacity-60 transition-opacity cursor-pointer uppercase tracking-widest"
+            className="hover:opacity-60 transition-opacity cursor-pointer uppercase tracking-wider sm:tracking-widest"
             aria-label="Open cart"
           >
             Cart ({count})

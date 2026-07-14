@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import products from '../data/products.json'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
@@ -8,13 +8,14 @@ const campaigns = ['/media/campaign-1.jpg', '/media/campaign-2.jpg', '/media/cam
 
 export default function Home() {
   const featured = products.filter(p => p.isNew)
+  const reduceMotion = useReducedMotion()
   return (
     <>
       <section className="relative h-svh overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src="/media/hero.mp4" poster="/media/hero-poster.jpg"
-          autoPlay muted loop playsInline preload="metadata"
+          autoPlay={!reduceMotion} muted loop playsInline preload="metadata"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
         <div className="relative h-full flex flex-col items-center justify-end pb-24 text-center px-6">

@@ -1,10 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, m } from 'framer-motion'
 import products from '../data/products.json'
 import { formatPrice } from '../utils/catalog'
 import { useCart } from '../context/CartContext'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
+import SkeletonImage from '../components/SkeletonImage'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function Product() {
@@ -17,6 +19,7 @@ export default function Product() {
   )
   const [error, setError] = useState(false)
   const [lastId, setLastId] = useState(id)
+  const [lightbox, setLightbox] = useState<string | null>(null)
 
   // Reset selection when navigating between products (adjust-state-during-render pattern)
   if (id !== lastId) {
@@ -24,6 +27,15 @@ export default function Product() {
     setSize(product && product.sizes.length === 1 ? product.sizes[0] : null)
     setError(false)
   }
+
+  useEffect(() => {
+    if (!lightbox) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [lightbox])
 
   if (!product) {
     return (
@@ -51,7 +63,17 @@ export default function Product() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
         <div className="space-y-4">
           {product.images.map(src => (
-            <img key={src} src={src} alt={product.name} loading="lazy" className="w-full aspect-[3/4] object-cover bg-coal" />
+            <button
+              key={src}
+              onClick={() => setLightbox(src)}
+              className="relative block w-full aspect-[3/4] overflow-hidden bg-coal cursor-zoom-in"
+              aria-label={`Zoom ${product.name} photo`}
+            >
+              <SkeletonImage
+                src={src} alt={product.name} loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </button>
           ))}
         </div>
 
@@ -95,6 +117,27 @@ export default function Product() {
           {related.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
       </section>
+
+      <AnimatePresence>
+        {lightbox && (
+          <m.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-10 cursor-zoom-out"
+            onClick={() => setLightbox(null)}
+            role="dialog" aria-modal="true" aria-label="Image preview"
+          >
+            <img src={lightbox} alt={product.name} className="max-h-full max-w-full object-contain" />
+            <button
+              onClick={() => setLightbox(null)}
+              aria-label="Close preview"
+              className="absolute top-6 right-6 text-mist hover:text-paper text-xl cursor-pointer"
+            >
+              ✕
+            </button>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

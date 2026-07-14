@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
-import { LazyMotion, domAnimation, MotionConfig } from 'framer-motion'
+import { AnimatePresence, LazyMotion, domAnimation, m, MotionConfig } from 'framer-motion'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
@@ -14,12 +14,12 @@ const Favorites = lazy(() => import('./pages/Favorites'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 export default function App() {
-  const { pathname } = useLocation()
+  const location = useLocation()
   const navigationType = useNavigationType()
   useEffect(() => {
     // On back/forward the browser restores the previous scroll position itself
     if (navigationType !== 'POP') window.scrollTo(0, 0)
-  }, [pathname, navigationType])
+  }, [location.pathname, navigationType])
 
   return (
     <LazyMotion features={domAnimation} strict>
@@ -28,16 +28,26 @@ export default function App() {
           <Header />
           <main className="flex-1">
             <ErrorBoundary>
-              <Suspense fallback={<div className="pt-32" aria-hidden="true" />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/catalog" element={<Catalog />} />
-                  <Route path="/product/:id" element={<Product />} />
-                  <Route path="/lookbook" element={<Lookbook />} />
-                  <Route path="/favorites" element={<Favorites />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+              <AnimatePresence mode="wait" initial={false}>
+                <m.div
+                  key={location.pathname}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Suspense fallback={<div className="pt-32 min-h-svh" aria-hidden="true" />}>
+                    <Routes location={location}>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/catalog" element={<Catalog />} />
+                      <Route path="/product/:id" element={<Product />} />
+                      <Route path="/lookbook" element={<Lookbook />} />
+                      <Route path="/favorites" element={<Favorites />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </m.div>
+              </AnimatePresence>
             </ErrorBoundary>
           </main>
           <Footer />

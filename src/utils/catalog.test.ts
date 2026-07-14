@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import { filterProducts, sortProducts, formatPrice, cartTotal } from './catalog'
+import type { Product } from '../types'
 
 const P = [
   { id: 'a', price: 100, category: 'tees', sizes: ['S', 'M'], isNew: false },
   { id: 'b', price: 50, category: 'pants', sizes: ['L'], isNew: true },
   { id: 'c', price: 300, category: 'tees', sizes: ['M'], isNew: true },
-]
+] as Product[]
 
 describe('filterProducts', () => {
   it('filters by category', () => {

@@ -1,6 +1,13 @@
 import { m } from 'framer-motion'
+import type { ReactNode } from 'react'
 
-export default function Reveal({ children, delay = 0, className = '' }) {
+interface RevealProps {
+  children: ReactNode
+  delay?: number
+  className?: string
+}
+
+export default function Reveal({ children, delay = 0, className = '' }: RevealProps) {
   return (
     <m.div
       className={className}

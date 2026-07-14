@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { CartProvider, useCart } from './CartContext'
 
-const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>
+const wrapper = ({ children }: { children: ReactNode }) => <CartProvider>{children}</CartProvider>
 
 beforeEach(() => localStorage.clear())
 

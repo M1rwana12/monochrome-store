@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
 import { AnimatePresence, LazyMotion, domAnimation, m, MotionConfig } from 'framer-motion'
+import { Analytics } from '@vercel/analytics/react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
@@ -52,6 +53,8 @@ export default function App() {
           </main>
           <Footer />
           <CartDrawer />
+          {/* The insights script only exists on Vercel; skip locally to keep the console clean */}
+          {import.meta.env.PROD && window.location.hostname !== 'localhost' && <Analytics />}
         </div>
       </MotionConfig>
     </LazyMotion>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatPrice } from '../utils/catalog'
 import { useFavorites } from '../context/FavoritesContext'
+import SkeletonImage from './SkeletonImage'
 import type { Product } from '../types'
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -11,7 +12,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link to={`/product/${product.id}`} className="group block">
       <div className="relative aspect-[3/4] overflow-hidden bg-coal">
-        <img
+        <SkeletonImage
           src={main} alt={product.name} loading="lazy"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

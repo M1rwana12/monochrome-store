@@ -21,7 +21,7 @@ export default function Home() {
           <motion.h1
             initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-[0.2em]"
+            className="font-display text-4xl sm:text-7xl md:text-8xl tracking-[0.15em] sm:tracking-[0.2em]"
           >
             MONOCHROME
           </motion.h1>

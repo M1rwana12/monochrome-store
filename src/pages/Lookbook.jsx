@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useReducedMotion } from 'framer-motion'
 import Reveal from '../components/Reveal'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
@@ -11,6 +12,7 @@ const blocks = [
 
 export default function Lookbook() {
   useDocumentTitle('FW26 Lookbook')
+  const reduceMotion = useReducedMotion()
   return (
     <div className="pt-16">
       <div className="py-20 text-center px-6">
@@ -27,7 +29,7 @@ export default function Lookbook() {
               {b.type === 'video' ? (
                 <video
                   src={b.src} poster={b.poster}
-                  autoPlay muted loop playsInline preload="metadata"
+                  autoPlay={!reduceMotion} muted loop playsInline preload="metadata"
                   className="w-full h-[80vh] object-cover"
                 />
               ) : (

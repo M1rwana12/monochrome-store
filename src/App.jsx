@@ -1,5 +1,6 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
@@ -10,9 +11,14 @@ import Lookbook from './pages/Lookbook'
 
 export default function App() {
   const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  const navigationType = useNavigationType()
+  useEffect(() => {
+    // On back/forward the browser restores the previous scroll position itself
+    if (navigationType !== 'POP') window.scrollTo(0, 0)
+  }, [pathname, navigationType])
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
@@ -26,5 +32,6 @@ export default function App() {
       <Footer />
       <CartDrawer />
     </div>
+    </MotionConfig>
   )
 }

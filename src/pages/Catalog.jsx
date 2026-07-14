@@ -73,7 +73,15 @@ export default function Catalog() {
       </div>
 
       {shown.length === 0 && (
-        <p className="mt-16 text-center text-mist">Nothing matches these filters.</p>
+        <div className="mt-16 text-center space-y-6">
+          <p className="text-mist">Nothing matches these filters.</p>
+          <button
+            onClick={() => setParams({}, { replace: true })}
+            className="border border-white/20 px-8 py-3 uppercase tracking-[0.3em] text-xs hover:border-paper transition-colors cursor-pointer"
+          >
+            Clear filters
+          </button>
+        </div>
       )}
     </div>
   )

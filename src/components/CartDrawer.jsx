@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { cartTotal, formatPrice } from '../utils/catalog'
@@ -8,11 +8,45 @@ export default function CartDrawer() {
   const { items, isOpen, closeCart, setQty, removeItem, clear } = useCart()
   const [stage, setStage] = useState('cart') // 'cart' | 'checkout' | 'done'
   const total = cartTotal(items, products)
+  const asideRef = useRef(null)
 
   const close = () => {
     closeCart()
     setTimeout(() => setStage('cart'), 300)
   }
+
+  useEffect(() => {
+    if (!isOpen) return
+    const previouslyFocused = document.activeElement
+    const aside = asideRef.current
+    aside?.querySelector('button, input')?.focus()
+
+    const onKeyDown = e => {
+      if (e.key === 'Escape') {
+        closeCart()
+        setTimeout(() => setStage('cart'), 300)
+        return
+      }
+      if (e.key !== 'Tab' || !aside) return
+      const focusables = aside.querySelectorAll('button, input, a[href]')
+      if (!focusables.length) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      previouslyFocused?.focus?.()
+    }
+  }, [isOpen, closeCart])
 
   const submitOrder = e => {
     e.preventDefault()
@@ -30,10 +64,11 @@ export default function CartDrawer() {
             onClick={close}
           />
           <motion.aside
+            ref={asideRef}
             className="fixed right-0 top-0 h-full w-full max-w-md bg-coal z-50 flex flex-col"
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            role="dialog" aria-label="Shopping cart"
+            role="dialog" aria-modal="true" aria-label="Shopping cart"
           >
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <h2 className="font-display text-lg tracking-widest uppercase">

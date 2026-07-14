@@ -10,6 +10,7 @@ import Home from './pages/Home'
 const Catalog = lazy(() => import('./pages/Catalog'))
 const Product = lazy(() => import('./pages/Product'))
 const Lookbook = lazy(() => import('./pages/Lookbook'))
+const Favorites = lazy(() => import('./pages/Favorites'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
                   <Route path="/catalog" element={<Catalog />} />
                   <Route path="/product/:id" element={<Product />} />
                   <Route path="/lookbook" element={<Lookbook />} />
+                  <Route path="/favorites" element={<Favorites />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const blocks = [
   { type: 'video', src: '/media/lookbook-1.mp4', poster: '/media/campaign-1.jpg', caption: 'I. Presence' },
@@ -9,6 +10,7 @@ const blocks = [
 ]
 
 export default function Lookbook() {
+  useDocumentTitle('FW26 Lookbook')
   return (
     <div className="pt-16">
       <div className="py-20 text-center px-6">

@@ -5,10 +5,12 @@ import { formatPrice } from '../utils/catalog'
 import { useCart } from '../context/CartContext'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function Product() {
   const { id } = useParams()
   const product = products.find(p => p.id === id)
+  useDocumentTitle(product ? product.name : 'Not found')
   const { addItem } = useCart()
   const [size, setSize] = useState(null)
   const [error, setError] = useState(false)

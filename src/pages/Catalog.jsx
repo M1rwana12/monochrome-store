@@ -3,6 +3,7 @@ import products from '../data/products.json'
 import { filterProducts, sortProducts } from '../utils/catalog'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const CATEGORIES = ['all', 'outerwear', 'hoodies', 'tees', 'pants', 'accessories']
 const SIZES = ['all', 'S', 'M', 'L', 'XL', 'ONE']
@@ -19,6 +20,7 @@ const SORTS = [
 ]
 
 export default function Catalog() {
+  useDocumentTitle('Catalog')
   const [params, setParams] = useSearchParams()
   const category = params.get('category') || 'all'
   const size = params.get('size') || 'all'

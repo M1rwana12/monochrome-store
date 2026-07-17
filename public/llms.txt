@@ -1,0 +1,17 @@
+# MONOCHROME
+
+> Concept fashion e-commerce demo (portfolio project). A cinematic dark-themed
+> store where every photo and video is AI-generated with Higgsfield.
+> No real orders are taken; checkout is a demo flow.
+
+## Pages
+
+- [Home](/): hero video and the new FW26 collection
+- [Catalog](/catalog): 12 products with category/size/price filters in the URL
+- [Lookbook](/lookbook): editorial campaign videos and stills
+- [Product pages](/product/p01): sizes, related items, structured data (schema.org Product)
+
+## Notes
+
+- Source: https://github.com/M1rwana12/monochrome-store
+- Stack: React 18, Vite, TypeScript, Tailwind CSS v4, Framer Motion

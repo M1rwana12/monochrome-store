@@ -1,7 +1,6 @@
 import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
 import { AnimatePresence, LazyMotion, domAnimation, m, MotionConfig } from 'framer-motion'
-import { Analytics } from '@vercel/analytics/react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
@@ -12,6 +11,7 @@ const Catalog = lazy(() => import('./pages/Catalog'))
 const Product = lazy(() => import('./pages/Product'))
 const Lookbook = lazy(() => import('./pages/Lookbook'))
 const Favorites = lazy(() => import('./pages/Favorites'))
+const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 export default function App() {
@@ -44,6 +44,7 @@ export default function App() {
                       <Route path="/product/:id" element={<Product />} />
                       <Route path="/lookbook" element={<Lookbook />} />
                       <Route path="/favorites" element={<Favorites />} />
+                      <Route path="/admin" element={<Admin />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
@@ -53,8 +54,6 @@ export default function App() {
           </main>
           <Footer />
           <CartDrawer />
-          {/* The insights script only exists on Vercel; skip locally to keep the console clean */}
-          {import.meta.env.PROD && window.location.hostname !== 'localhost' && <Analytics />}
         </div>
       </MotionConfig>
     </LazyMotion>

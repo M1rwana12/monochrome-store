@@ -17,6 +17,7 @@ ${routes.map(r => `  <url><loc>${SITE_URL}${r}</loc></url>`).join('\n')}
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /admin
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
 Sitemap: https://monochrome-store-117848350117.europe-central2.run.app/sitemap.xml

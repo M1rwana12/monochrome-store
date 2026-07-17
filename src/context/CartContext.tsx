@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { track } from '@vercel/analytics'
 import type { CartItem } from '../types'
 
 interface CartContextValue {
@@ -43,7 +42,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...prev, { id, size, qty: 1 }]
     })
     setIsOpen(true)
-    track('add_to_cart', { product: id, size })
   }
 
   const removeItem = (id: string, size: string) =>

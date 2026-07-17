@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
-import { track } from '@vercel/analytics'
 import { useCart } from '../context/CartContext'
 import { cartTotal, formatPrice } from '../utils/catalog'
+import { buildOrderItems, submitOrder } from '../utils/orders'
 import products from '../data/products.json'
 
 type Stage = 'cart' | 'checkout' | 'done'
@@ -16,6 +16,9 @@ const FIELDS = [
 export default function CartDrawer() {
   const { items, isOpen, closeCart, setQty, removeItem, clear } = useCart()
   const [stage, setStage] = useState<Stage>('cart')
+  const [sending, setSending] = useState(false)
+  const [orderError, setOrderError] = useState(false)
+  const [orderId, setOrderId] = useState<string | null>(null)
   const total = cartTotal(items, products)
   const asideRef = useRef<HTMLElement>(null)
 
@@ -57,11 +60,26 @@ export default function CartDrawer() {
     }
   }, [isOpen, closeCart])
 
-  const submitOrder = (e: FormEvent<HTMLFormElement>) => {
+  const placeOrder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    track('checkout_completed', { items: items.length, total })
-    clear()
-    setStage('done')
+    const form = new FormData(e.currentTarget)
+    const customer = {
+      name: String(form.get('name') ?? ''),
+      email: String(form.get('email') ?? ''),
+      address: String(form.get('address') ?? ''),
+    }
+    setSending(true)
+    setOrderError(false)
+    try {
+      const { id } = await submitOrder(customer, buildOrderItems(items, products))
+      setOrderId(id)
+      clear()
+      setStage('done')
+    } catch {
+      setOrderError(true)
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -125,7 +143,7 @@ export default function CartDrawer() {
             )}
 
             {stage === 'checkout' && (
-              <form onSubmit={submitOrder} className="flex-1 p-6 space-y-4 overflow-y-auto">
+              <form onSubmit={placeOrder} className="flex-1 p-6 space-y-4 overflow-y-auto">
                 {FIELDS.map(f => (
                   <label key={f.name} className="block text-xs uppercase tracking-widest text-mist">
                     {f.label}
@@ -138,16 +156,26 @@ export default function CartDrawer() {
                 <div className="flex justify-between text-sm uppercase tracking-widest pt-4">
                   <span>Total</span><span>{formatPrice(total)}</span>
                 </div>
-                <button type="submit" className="w-full bg-paper text-ink py-3 uppercase tracking-widest text-sm hover:bg-mist transition-colors cursor-pointer">
-                  Place order
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full bg-paper text-ink py-3 uppercase tracking-widest text-sm hover:bg-mist transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {sending ? 'Placing…' : 'Place order'}
                 </button>
-                <p className="text-xs text-mist">Demo checkout — no payment, no data stored.</p>
+                {orderError && (
+                  <p className="text-xs text-red-400 uppercase tracking-widest">
+                    Could not place the order — please try again.
+                  </p>
+                )}
+                <p className="text-xs text-mist">Demo store — the order is recorded, but no payment is taken.</p>
               </form>
             )}
 
             {stage === 'done' && (
               <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6 text-center">
                 <p className="font-display text-2xl tracking-widest uppercase">Order placed</p>
+                {orderId && <p className="text-sm tracking-widest text-paper/80">№ {orderId}</p>}
                 <p className="text-sm text-mist">This is a portfolio demo — nothing was charged.</p>
                 <button onClick={close} className="mt-4 border border-white/20 px-8 py-3 uppercase tracking-widest text-sm hover:border-paper transition-colors cursor-pointer">
                   Continue

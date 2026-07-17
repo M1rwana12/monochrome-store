@@ -36,6 +36,11 @@ the photo comes alive.
 custom ARIA-listbox filters with full keyboard navigation,
 `prefers-reduced-motion` support — and Lighthouse agrees: **100 / 100 / 100 / 100**.
 
+📦 **Real orders, real admin.** Checkout stores orders in **Firestore** through an
+Express API (same Cloud Run container), fires an optional **Telegram** notification,
+and a token-protected `/admin` page lists orders with status management.
+Demo store — no payments taken.
+
 ## 📸 Screens
 
 | Catalog — AI search & custom filters | Product — gallery, sizes, lightbox |
@@ -48,6 +53,7 @@ custom ARIA-listbox filters with full keyboard navigation,
 |---|---|
 | UI | React 18 · TypeScript (strict) · Tailwind CSS v4 · Framer Motion (LazyMotion) |
 | ML | Transformers.js · all-MiniLM-L6-v2 · cosine similarity ranking |
+| Backend | Express (static + REST API) · Firestore (orders) · Telegram notifications |
 | State | React Context + localStorage (cart, favorites) · URL search params (filters) |
 | Quality | Vitest (28) · Playwright (7 E2E) · ESLint + Prettier · GitHub Actions CI |
 | Media | Higgsfield (soul_2, nano_banana_pro, kling3_0_turbo) · WebP pipeline (−42%) |
@@ -64,8 +70,10 @@ npm run test:e2e   # Playwright E2E
 npm run build      # typecheck + build (+ sitemap generation)
 ```
 
-Deploy anywhere: `gcloud run deploy --source .` (Dockerfile included) — or
-import into Vercel / Netlify, configs are in the repo.
+Deploy: `gcloud run deploy --source .` (Dockerfile: node build → Express serving
+static + `/api`). Env vars: `ADMIN_TOKEN` (admin access), optionally
+`TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` for order notifications. Locally the
+server runs with an in-memory store: `node server/index.mjs`.
 
 ## 🎭 How it's made (a war story)
 

@@ -2,7 +2,7 @@
 
 > Concept fashion e-commerce demo (portfolio project). A cinematic dark-themed
 > store where every photo and video is AI-generated with Higgsfield.
-> No real orders are taken; checkout is a demo flow.
+> Orders are stored in Firestore for demo purposes; no payments are taken.
 
 ## Pages
 

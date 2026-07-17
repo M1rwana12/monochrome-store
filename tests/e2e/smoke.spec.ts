@@ -13,6 +13,9 @@ test('catalog filters restore from URL', async ({ page }) => {
 })
 
 test('add to cart requires size, then checkout completes', async ({ page }) => {
+  await page.route('**/api/orders', route =>
+    route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ id: 'MC-TEST01' }) }),
+  )
   await page.goto('/product/p01')
   const addButton = page.getByRole('button', { name: /add to cart/i })
 
@@ -33,6 +36,32 @@ test('add to cart requires size, then checkout completes', async ({ page }) => {
   await dialog.getByRole('button', { name: /place order/i }).click()
 
   await expect(dialog.getByText('Order placed')).toBeVisible()
+  await expect(dialog.getByText('MC-TEST01')).toBeVisible()
+})
+
+test('admin page gates with token and lists orders', async ({ page }) => {
+  await page.route('**/api/orders', route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([
+        {
+          id: 'MC-AA11',
+          createdAt: '2026-07-17T10:00:00.000Z',
+          status: 'new',
+          total: 290,
+          customer: { name: 'Test User', email: 'test@example.com', address: 'Kyiv' },
+          items: [{ id: 'p01', name: 'Oversized Wool Coat', size: 'M', qty: 1, price: 290 }],
+        },
+      ]),
+    }),
+  )
+  await page.goto('/admin')
+  await page.getByLabel(/access token/i).fill('secret')
+  await page.getByRole('button', { name: /enter/i }).click()
+  await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
+  await expect(page.getByText('MC-AA11')).toBeVisible()
+  await expect(page.getByText('Oversized Wool Coat (M) ×1')).toBeVisible()
 })
 
 test('cart persists across reloads', async ({ page }) => {

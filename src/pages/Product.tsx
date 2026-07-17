@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { AnimatePresence, m } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import products from '../data/products.json'
 import { formatPrice } from '../utils/catalog'
 import { useCart } from '../context/CartContext'
@@ -21,6 +21,7 @@ export default function Product() {
   const [error, setError] = useState(false)
   const [lastId, setLastId] = useState(id)
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const reduceMotion = useReducedMotion()
 
   // Reset selection when navigating between products (adjust-state-during-render pattern)
   if (id !== lastId) {
@@ -97,6 +98,15 @@ export default function Product() {
               />
             </button>
           ))}
+          {product.hoverVideo && (
+            <video
+              src={product.hoverVideo}
+              poster={product.images[0]}
+              autoPlay={!reduceMotion} muted loop playsInline preload="metadata"
+              className="w-full aspect-[3/4] object-cover bg-coal"
+              aria-label={`${product.name} in motion`}
+            />
+          )}
         </div>
 
         <div className="md:sticky md:top-28 self-start">

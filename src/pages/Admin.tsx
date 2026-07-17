@@ -31,10 +31,10 @@ export default function Admin() {
     }
   }, [])
 
-  // Data fetching on mount/token change; all setState happens after await.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    if (token) void load(token)
+    if (!token) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch; setState happens after await
+    void load(token)
   }, [token, load])
 
   const login = async (e: FormEvent) => {

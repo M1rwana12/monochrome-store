@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useReducedMotion } from 'framer-motion'
 import { formatPrice } from '../utils/catalog'
 import { useFavorites } from '../context/FavoritesContext'
 import SkeletonImage from './SkeletonImage'
@@ -8,18 +10,36 @@ export default function ProductCard({ product }: { product: Product }) {
   const [main, alt] = product.images
   const { has, toggle } = useFavorites()
   const saved = has(product.id)
+  const reduceMotion = useReducedMotion()
+  const [hovered, setHovered] = useState(false)
+  const showVideo = Boolean(product.hoverVideo) && hovered && !reduceMotion
 
   return (
-    <Link to={`/product/${product.id}`} className="group block">
+    <Link
+      to={`/product/${product.id}`}
+      className="group block"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
       <div className="relative aspect-[3/4] overflow-hidden bg-coal">
         <SkeletonImage
           src={main} alt={product.name} loading="lazy"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        {alt && (
+        {alt && !product.hoverVideo && (
           <img
             src={alt} alt="" loading="lazy" aria-hidden="true"
             className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          />
+        )}
+        {showVideo && (
+          <video
+            src={product.hoverVideo}
+            autoPlay muted loop playsInline preload="none"
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         )}
         {product.isNew && (

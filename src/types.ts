@@ -8,6 +8,7 @@ export interface Product {
   description: string
   isNew: boolean
   tags?: string[]
+  hoverVideo?: string
 }
 
 export interface CartItem {

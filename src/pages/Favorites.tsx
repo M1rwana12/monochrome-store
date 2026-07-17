@@ -9,9 +9,10 @@ import type { Product } from '../types'
 export default function Favorites() {
   useDocumentTitle('Saved')
   const { ids } = useFavorites()
-  const saved = ids
-    .map(id => products.find(p => p.id === id))
-    .filter((p): p is Product => Boolean(p))
+  const saved: Product[] = ids.flatMap(id => {
+    const product = products.find(p => p.id === id)
+    return product ? [product] : []
+  })
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-28 pb-16">

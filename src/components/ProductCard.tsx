@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
-import { formatPrice } from '../utils/catalog'
+import { formatMoney } from '../utils/money'
 import { useFavorites } from '../context/FavoritesContext'
+import useLocale from '../hooks/useLocale'
 import SkeletonImage from './SkeletonImage'
 import type { Product } from '../types'
 
@@ -11,12 +12,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const { has, toggle } = useFavorites()
   const saved = has(product.id)
   const reduceMotion = useReducedMotion()
+  const { lang, t, localePath } = useLocale()
   const [hovered, setHovered] = useState(false)
   const showVideo = Boolean(product.hoverVideo) && hovered && !reduceMotion
 
   return (
     <Link
-      to={`/product/${product.id}`}
+      to={localePath(`/product/${product.id}`)}
       className="group block"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -44,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
         {product.isNew && (
           <span className="absolute top-3 left-3 bg-paper text-ink text-[10px] uppercase tracking-widest px-2 py-1">
-            New
+            {t('product.new')}
           </span>
         )}
         <button
@@ -52,7 +54,7 @@ export default function ProductCard({ product }: { product: Product }) {
             e.preventDefault()
             toggle(product.id)
           }}
-          aria-label={saved ? 'Remove from saved' : 'Save item'}
+          aria-label={saved ? t('card.unsave') : t('card.save')}
           aria-pressed={saved}
           className={`absolute top-2 right-2 p-2 cursor-pointer transition-colors ${
             saved ? 'text-paper' : 'text-paper/50 hover:text-paper'
@@ -65,7 +67,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
       <div className="mt-3 flex items-baseline justify-between gap-2 text-sm">
         <span>{product.name}</span>
-        <span className="text-mist shrink-0">{formatPrice(product.price)}</span>
+        <span className="text-mist shrink-0">{formatMoney(product.price, lang)}</span>
       </div>
     </Link>
   )

@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "catalog": "Catalog",
+    "lookbook": "Lookbook",
+    "cart": "Cart",
+    "savedAria": "Saved items"
+  },
+  "footer": {
+    "tagline": "Concept store — portfolio project. Demo orders, no payments."
+  },
+  "home": {
+    "slogan": "Cinematic essentials — FW26",
+    "cta": "Shop the collection",
+    "newCollection": "New collection",
+    "viewLookbook": "View lookbook",
+    "campaignAlt": "MONOCHROME campaign"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "aiPlaceholder": "AI search — try \"something warm for a cold evening\"",
+    "aiAria": "AI search",
+    "search": "Search",
+    "thinking": "Thinking…",
+    "clear": "Clear",
+    "aiHintIdle": "Semantic search — a neural network runs entirely in your browser",
+    "aiLoading": "Loading on-device AI model (~50 MB, first time only)…",
+    "aiError": "AI search unavailable right now — filters still work.",
+    "category": "Category",
+    "size": "Size",
+    "maxPrice": "Max price",
+    "sort": "Sort",
+    "allCategories": "All categories",
+    "allSizes": "All sizes",
+    "anyPrice": "Any price",
+    "under": "Under {{price}}",
+    "sortNew": "New first",
+    "priceAsc": "Price ↑",
+    "priceDesc": "Price ↓",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "rankedByAi": " · ranked by AI relevance",
+    "nothing": "Nothing matches these filters.",
+    "clearFilters": "Clear filters"
+  },
+  "categories": {
+    "outerwear": "Outerwear",
+    "hoodies": "Hoodies",
+    "tees": "Tees",
+    "pants": "Pants",
+    "accessories": "Accessories"
+  },
+  "product": {
+    "new": "New",
+    "size": "Size",
+    "selectSize": "Select a size first",
+    "addToCart": "Add to cart",
+    "wearItWith": "Wear it with",
+    "notFound": "Not found",
+    "backToCatalog": "Back to catalog",
+    "zoomAria": "Zoom {{name}} photo",
+    "inMotion": "{{name}} in motion",
+    "closePreview": "Close preview",
+    "preview": "Image preview"
+  },
+  "cart": {
+    "title": "Cart",
+    "checkoutTitle": "Checkout",
+    "thankYou": "Thank you",
+    "empty": "Your cart is empty.",
+    "sizeLine": "Size {{size}} · {{price}}",
+    "remove": "Remove",
+    "total": "Total",
+    "checkout": "Checkout",
+    "name": "Full name",
+    "email": "Email",
+    "address": "Address",
+    "placeOrder": "Place order",
+    "placing": "Placing…",
+    "orderError": "Could not place the order — please try again.",
+    "demoNote": "Demo store — the order is recorded, but no payment is taken.",
+    "orderPlaced": "Order placed",
+    "demoNoteDone": "This is a portfolio demo — nothing was charged.",
+    "continue": "Continue",
+    "close": "Close cart",
+    "open": "Open cart",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "dialogAria": "Shopping cart"
+  },
+  "favorites": {
+    "title": "Saved",
+    "empty": "Nothing saved yet. Tap the heart on any item.",
+    "browse": "Browse catalog"
+  },
+  "card": {
+    "save": "Save item",
+    "unsave": "Remove from saved"
+  },
+  "lookbook": {
+    "title": "FW26 Lookbook",
+    "subtitle": "Cinematic essentials",
+    "shop": "Shop the collection"
+  },
+  "notFound": {
+    "text": "Page not found",
+    "home": "Back to home"
+  }
+}

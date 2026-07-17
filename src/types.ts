@@ -1,3 +1,8 @@
+export interface LocalizedText {
+  uk: string
+  en: string
+}
+
 export interface Product {
   id: string
   name: string
@@ -5,7 +10,7 @@ export interface Product {
   price: number
   sizes: string[]
   images: string[]
-  description: string
+  description: LocalizedText
   isNew: boolean
   tags?: string[]
   hoverVideo?: string

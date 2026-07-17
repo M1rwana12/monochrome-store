@@ -30,17 +30,22 @@ describe('rankBySimilarity', () => {
 })
 
 describe('productText', () => {
-  it('combines name, category and description', () => {
-    const p = { name: 'Wool Coat', category: 'outerwear', description: 'Warm.' } as Product
-    expect(productText(p)).toBe('Wool Coat. outerwear. Warm.')
+  it('combines name, category and localized description', () => {
+    const p = {
+      name: 'Wool Coat',
+      category: 'outerwear',
+      description: { en: 'Warm.', uk: 'Тепле.' },
+    } as Product
+    expect(productText(p, 'en')).toBe('Wool Coat. outerwear. Warm.')
+    expect(productText(p, 'uk')).toBe('Wool Coat. outerwear. Тепле.')
   })
   it('appends search tags when present', () => {
     const p = {
       name: 'Beanie',
       category: 'accessories',
-      description: 'Knit.',
+      description: { en: 'Knit.', uk: 'Вʼязана.' },
       tags: ['hat', 'warm'],
     } as Product
-    expect(productText(p)).toBe('Beanie. accessories. Knit. Keywords: hat, warm.')
+    expect(productText(p, 'en')).toBe('Beanie. accessories. Knit. Keywords: hat, warm.')
   })
 })

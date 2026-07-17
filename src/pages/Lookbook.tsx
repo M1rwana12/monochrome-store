@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 import Reveal from '../components/Reveal'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import useLocale from '../hooks/useLocale'
 
 interface LookbookBlock {
   type: 'video' | 'image'
@@ -18,14 +19,15 @@ const blocks: LookbookBlock[] = [
 ]
 
 export default function Lookbook() {
-  useDocumentTitle('FW26 Lookbook')
+  const { t, localePath } = useLocale()
+  useDocumentTitle(t('lookbook.title'))
   const reduceMotion = useReducedMotion()
   return (
     <div className="pt-16">
       <div className="py-20 text-center px-6">
         <Reveal>
-          <h1 className="font-display text-4xl sm:text-6xl uppercase tracking-[0.2em]">FW26 Lookbook</h1>
-          <p className="mt-4 text-mist uppercase tracking-[0.4em] text-xs">Cinematic essentials</p>
+          <h1 className="font-display text-4xl sm:text-6xl uppercase tracking-[0.2em]">{t('lookbook.title')}</h1>
+          <p className="mt-4 text-mist uppercase tracking-[0.4em] text-xs">{t('lookbook.subtitle')}</p>
         </Reveal>
       </div>
 
@@ -52,8 +54,8 @@ export default function Lookbook() {
 
       <div className="py-24 text-center">
         <Reveal>
-          <Link to="/catalog" className="border border-paper/40 px-10 py-4 uppercase tracking-[0.3em] text-xs hover:bg-paper hover:text-ink transition-colors">
-            Shop the collection
+          <Link to={localePath('/catalog')} className="border border-paper/40 px-10 py-4 uppercase tracking-[0.3em] text-xs hover:bg-paper hover:text-ink transition-colors">
+            {t('lookbook.shop')}
           </Link>
         </Reveal>
       </div>

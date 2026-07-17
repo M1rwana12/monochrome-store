@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { CartProvider } from './context/CartContext'
 import { FavoritesProvider } from './context/FavoritesContext'
+import './i18n'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -1,4 +1,5 @@
 import type { Product } from '../types'
+import type { Lang } from '../i18n'
 
 export type Embedding = number[]
 
@@ -6,13 +7,16 @@ type Embedder = (texts: string[]) => Promise<Embedding[]>
 
 let embedderPromise: Promise<Embedder> | null = null
 
-// Loads the model lazily (dynamic import keeps ~1MB of JS + the ~25MB model
-// out of the main bundle until the user actually opens AI search).
+// Multilingual model (50+ languages incl. Ukrainian) so semantic search works
+// for queries like «щось тепле на осінь». Loaded lazily: dynamic import keeps
+// the JS + ~50MB model out of the main bundle until AI search is used.
 async function createEmbedder(): Promise<Embedder> {
   const { pipeline } = await import('@huggingface/transformers')
-  const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
-    dtype: 'q8',
-  })
+  const extractor = await pipeline(
+    'feature-extraction',
+    'Xenova/paraphrase-multilingual-MiniLM-L12-v2',
+    { dtype: 'q8' },
+  )
   return async texts => {
     const output = await extractor(texts, { pooling: 'mean', normalize: true })
     return output.tolist() as Embedding[]
@@ -24,9 +28,9 @@ export function getEmbedder(): Promise<Embedder> {
   return embedderPromise
 }
 
-export function productText(p: Product) {
+export function productText(p: Product, lang: Lang) {
   const tags = p.tags?.length ? ` Keywords: ${p.tags.join(', ')}.` : ''
-  return `${p.name}. ${p.category}. ${p.description}${tags}`
+  return `${p.name}. ${p.category}. ${p.description[lang]}${tags}`
 }
 
 // Embeddings are L2-normalized, so cosine similarity reduces to a dot product

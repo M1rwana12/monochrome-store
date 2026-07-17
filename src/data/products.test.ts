@@ -15,7 +15,10 @@ describe('products.json', () => {
       expect(p.price).toBeGreaterThan(0)
       expect(p.sizes.length).toBeGreaterThan(0)
       expect(p.images.length).toBeGreaterThan(0)
-      expect(typeof p.description).toBe('string')
+      expect(typeof p.description.uk).toBe('string')
+      expect(typeof p.description.en).toBe('string')
+      expect(p.description.uk.length).toBeGreaterThan(0)
+      expect(p.description.en.length).toBeGreaterThan(0)
       expect(typeof p.isNew).toBe('boolean')
     }
   })

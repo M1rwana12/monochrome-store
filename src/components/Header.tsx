@@ -1,19 +1,22 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useFavorites } from '../context/FavoritesContext'
-
-const nav = [
-  { to: '/catalog', label: 'Catalog' },
-  { to: '/lookbook', label: 'Lookbook' },
-]
+import useLocale from '../hooks/useLocale'
 
 export default function Header() {
   const { count, openCart } = useCart()
   const { count: savedCount } = useFavorites()
+  const { lang, t, localePath, pathInLang } = useLocale()
+
+  const nav = [
+    { to: localePath('/catalog'), label: t('nav.catalog') },
+    { to: localePath('/lookbook'), label: t('nav.lookbook') },
+  ]
+
   return (
     <header className="fixed top-0 inset-x-0 z-40 mix-blend-difference text-paper">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="font-display font-bold tracking-[0.15em] sm:tracking-[0.3em] text-sm sm:text-lg">
+        <Link to={localePath('/')} className="font-display font-bold tracking-[0.15em] sm:tracking-[0.3em] text-sm sm:text-lg">
           MONOCHROME
         </Link>
         <nav className="flex items-center gap-3 sm:gap-6 text-[11px] sm:text-sm uppercase tracking-wider sm:tracking-widest">
@@ -21,6 +24,7 @@ export default function Header() {
             <NavLink
               key={n.to}
               to={n.to}
+              end
               className={({ isActive }) =>
                 `hover:opacity-60 transition-opacity ${isActive ? 'underline underline-offset-8' : ''}`
               }
@@ -29,8 +33,8 @@ export default function Header() {
             </NavLink>
           ))}
           <NavLink
-            to="/favorites"
-            aria-label="Saved items"
+            to={localePath('/favorites')}
+            aria-label={t('nav.savedAria')}
             className={({ isActive }) =>
               `flex items-center gap-1 hover:opacity-60 transition-opacity ${isActive ? 'underline underline-offset-8' : ''}`
             }
@@ -44,8 +48,15 @@ export default function Header() {
             onClick={openCart}
             className="hover:opacity-60 transition-opacity cursor-pointer uppercase tracking-wider sm:tracking-widest"
           >
-            Cart ({count})
+            {t('nav.cart')} ({count})
           </button>
+          <Link
+            to={pathInLang(lang === 'uk' ? 'en' : 'uk')}
+            aria-label={lang === 'uk' ? 'Switch to English' : 'Перейти на українську'}
+            className="border border-current px-1.5 py-0.5 text-[10px] sm:text-xs hover:opacity-60 transition-opacity"
+          >
+            {lang === 'uk' ? 'EN' : 'UA'}
+          </Link>
         </nav>
       </div>
     </header>

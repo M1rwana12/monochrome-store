@@ -2,18 +2,20 @@ import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import products from '../data/products.json'
-import { formatPrice } from '../utils/catalog'
+import { formatMoney } from '../utils/money'
 import { useCart } from '../context/CartContext'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import SkeletonImage from '../components/SkeletonImage'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import useLocale from '../hooks/useLocale'
 import { SITE_URL } from '../config'
 
 export default function Product() {
   const { id } = useParams<{ id: string }>()
   const product = products.find(p => p.id === id)
-  useDocumentTitle(product ? product.name : 'Not found')
+  const { lang, t, localePath } = useLocale()
+  useDocumentTitle(product ? product.name : '404')
   const { addItem } = useCart()
   const [size, setSize] = useState<string | null>(() =>
     product && product.sizes.length === 1 ? product.sizes[0] : null,
@@ -42,9 +44,9 @@ export default function Product() {
   if (!product) {
     return (
       <div className="pt-40 text-center">
-        <p className="font-display text-2xl uppercase tracking-widest">Not found</p>
-        <Link to="/catalog" className="text-mist text-sm underline underline-offset-4 mt-4 inline-block">
-          Back to catalog
+        <p className="font-display text-2xl uppercase tracking-widest">{t('product.notFound')}</p>
+        <Link to={localePath('/catalog')} className="text-mist text-sm underline underline-offset-4 mt-4 inline-block">
+          {t('product.backToCatalog')}
         </Link>
       </div>
     )
@@ -64,12 +66,12 @@ export default function Product() {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    description: product.description,
+    description: product.description[lang],
     image: product.images.map(src => `${SITE_URL}${src}`),
     brand: { '@type': 'Brand', name: 'MONOCHROME' },
     offers: {
       '@type': 'Offer',
-      url: `${SITE_URL}/product/${product.id}`,
+      url: `${SITE_URL}${localePath(`/product/${product.id}`)}`,
       price: product.price,
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
@@ -90,7 +92,7 @@ export default function Product() {
               key={src}
               onClick={() => setLightbox(src)}
               className="relative block w-full aspect-[3/4] overflow-hidden bg-coal cursor-zoom-in"
-              aria-label={`Zoom ${product.name} photo`}
+              aria-label={t('product.zoomAria', { name: product.name })}
             >
               <SkeletonImage
                 src={src} alt={product.name} loading="lazy"
@@ -104,20 +106,20 @@ export default function Product() {
               poster={product.images[0]}
               autoPlay={!reduceMotion} muted loop playsInline preload="metadata"
               className="w-full aspect-[3/4] object-cover bg-coal"
-              aria-label={`${product.name} in motion`}
+              aria-label={t('product.inMotion', { name: product.name })}
             />
           )}
         </div>
 
         <div className="md:sticky md:top-28 self-start">
           <Reveal>
-            {product.isNew && <span className="text-[10px] uppercase tracking-widest bg-paper text-ink px-2 py-1">New</span>}
+            {product.isNew && <span className="text-[10px] uppercase tracking-widest bg-paper text-ink px-2 py-1">{t('product.new')}</span>}
             <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wide mt-4">{product.name}</h1>
-            <p className="mt-2 text-xl text-mist">{formatPrice(product.price)}</p>
-            <p className="mt-6 text-sm leading-relaxed text-paper/80 max-w-md">{product.description}</p>
+            <p className="mt-2 text-xl text-mist">{formatMoney(product.price, lang)}</p>
+            <p className="mt-6 text-sm leading-relaxed text-paper/80 max-w-md">{product.description[lang]}</p>
 
             <div className="mt-8">
-              <p className="text-xs uppercase tracking-widest text-mist mb-3">Size</p>
+              <p className="text-xs uppercase tracking-widest text-mist mb-3">{t('product.size')}</p>
               <div className="flex gap-2 flex-wrap">
                 {product.sizes.map(s => (
                   <button
@@ -131,11 +133,11 @@ export default function Product() {
                   </button>
                 ))}
               </div>
-              {error && <p className="mt-2 text-xs text-red-400 uppercase tracking-widest">Select a size first</p>}
+              {error && <p className="mt-2 text-xs text-red-400 uppercase tracking-widest">{t('product.selectSize')}</p>}
             </div>
 
             <button onClick={add} className="mt-8 w-full sm:w-80 bg-paper text-ink py-4 uppercase tracking-[0.3em] text-xs hover:bg-mist transition-colors cursor-pointer">
-              Add to cart — {formatPrice(product.price)}
+              {t('product.addToCart')} — {formatMoney(product.price, lang)}
             </button>
           </Reveal>
         </div>
@@ -143,7 +145,7 @@ export default function Product() {
 
       <section className="mt-24">
         <Reveal>
-          <h2 className="font-display text-xl uppercase tracking-widest mb-8">Wear it with</h2>
+          <h2 className="font-display text-xl uppercase tracking-widest mb-8">{t('product.wearItWith')}</h2>
         </Reveal>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {related.map(p => <ProductCard key={p.id} product={p} />)}
@@ -157,12 +159,12 @@ export default function Product() {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-10 cursor-zoom-out"
             onClick={() => setLightbox(null)}
-            role="dialog" aria-modal="true" aria-label="Image preview"
+            role="dialog" aria-modal="true" aria-label={t('product.preview')}
           >
             <img src={lightbox} alt={product.name} className="max-h-full max-w-full object-contain" />
             <button
               onClick={() => setLightbox(null)}
-              aria-label="Close preview"
+              aria-label={t('product.closePreview')}
               className="absolute top-6 right-6 text-mist hover:text-paper text-xl cursor-pointer"
             >
               ✕

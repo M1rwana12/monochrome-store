@@ -7,7 +7,9 @@ const SITE_URL = 'https://monochrome-store-117848350117.europe-central2.run.app'
 const products = JSON.parse(await readFile('src/data/products.json', 'utf8'))
 
 const staticRoutes = ['/', '/catalog', '/lookbook']
-const routes = [...staticRoutes, ...products.map(p => `/product/${p.id}`)]
+const ukRoutes = [...staticRoutes, ...products.map(p => `/product/${p.id}`)]
+// English mirror lives under /en
+const routes = [...ukRoutes, ...ukRoutes.map(r => (r === '/' ? '/en' : `/en${r}`))]
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

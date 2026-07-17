@@ -2,7 +2,7 @@
 // Runs automatically before every build (see "prebuild" script).
 import { readFile, writeFile } from 'node:fs/promises'
 
-const SITE_URL = 'https://monochrome-store.vercel.app'
+const SITE_URL = 'https://monochrome-store-117848350117.europe-central2.run.app'
 
 const products = JSON.parse(await readFile('src/data/products.json', 'utf8'))
 

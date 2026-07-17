@@ -5,10 +5,14 @@ All visuals (21 photos & 3 videos) are AI-generated with [Higgsfield](https://hi
 
 ## Stack
 
-React 18 · Vite · Tailwind CSS v4 · Framer Motion · React Router · Vitest
+React 18 · TypeScript · Vite · Tailwind CSS v4 · Framer Motion · React Router ·
+Transformers.js · Vitest · Playwright
 
 ## Features
 
+- **On-device semantic search**: a neural network (all-MiniLM-L6-v2 via Transformers.js)
+  runs entirely in the visitor's browser — type "something warm for a cold evening"
+  and products are ranked by meaning, not keywords. No server, no API keys.
 - Full-screen AI hero video, editorial lookbook
 - Catalog with URL-driven filters (category / size / price / sort) — shareable links
 - Product pages with size selection and related items

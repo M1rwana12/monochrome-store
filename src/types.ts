@@ -7,6 +7,7 @@ export interface Product {
   images: string[]
   description: string
   isNew: boolean
+  tags?: string[]
 }
 
 export interface CartItem {

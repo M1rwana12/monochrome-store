@@ -72,7 +72,7 @@ test('favorites: heart on card adds item to saved page', async ({ page }) => {
   await expect(page.locator('a[href^="/product/"]')).toHaveCount(1)
 })
 
-test('admin page gates with token and lists orders', async ({ page }) => {
+test('admin: dashboard KPIs, orders tab and customers tab', async ({ page }) => {
   await page.route('**/api/orders', route =>
     route.fulfill({
       status: 200,
@@ -80,7 +80,7 @@ test('admin page gates with token and lists orders', async ({ page }) => {
       body: JSON.stringify([
         {
           id: 'MC-AA11',
-          createdAt: '2026-07-17T10:00:00.000Z',
+          createdAt: new Date().toISOString(),
           status: 'new',
           total: 290,
           customer: { name: 'Test User', email: 'test@example.com', address: 'Kyiv' },
@@ -89,12 +89,38 @@ test('admin page gates with token and lists orders', async ({ page }) => {
       ]),
     }),
   )
+  await page.route('**/api/admin/customers', route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([
+        {
+          email: 'test@example.com',
+          name: 'Test User',
+          points: 465,
+          totalSpentUsd: 290,
+          ordersCount: 1,
+          level: 'graphite',
+          createdAt: '2026-07-17T10:00:00.000Z',
+        },
+      ]),
+    }),
+  )
   await page.goto('/admin')
   await page.getByLabel(/access token/i).fill('secret')
   await page.getByRole('button', { name: /enter/i }).click()
-  await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
+
+  // Dashboard is the default tab
+  await expect(page.getByText('Today')).toBeVisible()
+  await expect(page.getByText('1 orders · $290').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'orders' }).click()
   await expect(page.getByText('MC-AA11')).toBeVisible()
   await expect(page.getByText('Oversized Wool Coat (M) ×1')).toBeVisible()
+
+  await page.getByRole('button', { name: 'customers' }).click()
+  await expect(page.getByText('test@example.com')).toBeVisible()
+  await expect(page.getByText('465 pts')).toBeVisible()
 })
 
 test('account page shows login and register forms', async ({ page }) => {

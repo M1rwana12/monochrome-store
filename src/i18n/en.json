@@ -128,7 +128,10 @@
     },
     "status": {
       "new": "new",
-      "done": "done"
+      "confirmed": "confirmed",
+      "shipped": "shipped",
+      "done": "done",
+      "cancelled": "cancelled"
     },
     "aria": "Account",
     "pointsEarned": "+{{count}} MONO Club points earned"

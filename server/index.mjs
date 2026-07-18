@@ -28,7 +28,7 @@ const IS_PROD = Boolean(process.env.K_SERVICE)
 const useFirestore = Boolean(process.env.K_SERVICE || process.env.USE_FIRESTORE)
 let store
 if (useFirestore) {
-  const { Firestore } = await import('@google-cloud/firestore')
+  const { Firestore, FieldValue } = await import('@google-cloud/firestore')
   const db = new Firestore()
   const orders = db.collection('orders')
   const users = db.collection('users')
@@ -48,7 +48,14 @@ if (useFirestore) {
         .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
     },
     async setOrderStatus(id, status) {
-      await orders.doc(id).update({ status })
+      await orders.doc(id).update({
+        status,
+        statusHistory: FieldValue.arrayUnion({ status, at: new Date().toISOString() }),
+      })
+    },
+    async listUsers() {
+      const snap = await users.limit(200).get()
+      return snap.docs.map(d => d.data())
     },
     async getUserByEmail(email) {
       const snap = await users.where('email', '==', email).limit(1).get()
@@ -91,6 +98,10 @@ if (useFirestore) {
       const order = mem.orders.find(o => o.id === id)
       if (!order) throw Object.assign(new Error('not found'), { code: 404 })
       order.status = status
+      order.statusHistory = [...(order.statusHistory ?? []), { status, at: new Date().toISOString() }]
+    },
+    async listUsers() {
+      return [...mem.users.values()]
     },
     async getUserByEmail(email) {
       for (const user of mem.users.values()) if (user.email === email) return user
@@ -117,6 +128,7 @@ if (useFirestore) {
 
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const ORDER_STATUSES = ['new', 'confirmed', 'shipped', 'done', 'cancelled']
 
 // Demo-store trust model: prices come from the client and are only sanity-checked.
 // A real shop would price items server-side.
@@ -310,10 +322,12 @@ app.post('/api/orders', async (req, res) => {
   const parsed = parseOrder(req.body)
   if (!parsed) return res.status(400).json({ error: 'invalid order' })
   const uid = sessionUid(req)
+  const createdAt = new Date().toISOString()
   const order = {
     id: `MC-${crypto.randomBytes(3).toString('hex').toUpperCase()}`,
-    createdAt: new Date().toISOString(),
+    createdAt,
     status: 'new',
+    statusHistory: [{ status: 'new', at: createdAt }],
     uid,
     ...parsed,
   }
@@ -335,6 +349,7 @@ app.post('/api/orders', async (req, res) => {
         await store.updateUser(uid, {
           points: (user.points ?? 0) + pointsEarned,
           totalSpentUsd: (user.totalSpentUsd ?? 0) + order.total,
+          ordersCount: (user.ordersCount ?? 0) + 1,
         })
       }
     }
@@ -357,13 +372,33 @@ app.get('/api/orders', requireAdmin, async (_req, res) => {
 
 app.patch('/api/orders/:id', requireAdmin, async (req, res) => {
   const status = req.body?.status
-  if (status !== 'new' && status !== 'done') return res.status(400).json({ error: 'invalid status' })
+  if (!ORDER_STATUSES.includes(status)) return res.status(400).json({ error: 'invalid status' })
   try {
     await store.setOrderStatus(req.params.id, status)
     res.status(204).end()
   } catch (err) {
     if (err.code === 404 || err.code === 5) return res.status(404).json({ error: 'not found' })
     console.error('order update failed:', err)
+    res.status(500).json({ error: 'storage failed' })
+  }
+})
+
+app.get('/api/admin/customers', requireAdmin, async (_req, res) => {
+  try {
+    const users = await store.listUsers()
+    res.json(
+      users.map(u => ({
+        email: u.email,
+        name: u.name,
+        points: u.points ?? 0,
+        totalSpentUsd: u.totalSpentUsd ?? 0,
+        ordersCount: u.ordersCount ?? 0,
+        level: bonusLevel(u.totalSpentUsd ?? 0).name,
+        createdAt: u.createdAt,
+      })),
+    )
+  } catch (err) {
+    console.error('customers failed:', err)
     res.status(500).json({ error: 'storage failed' })
   }
 })

@@ -130,7 +130,10 @@
     },
     "status": {
       "new": "нове",
-      "done": "виконано"
+      "confirmed": "підтверджено",
+      "shipped": "відправлено",
+      "done": "виконано",
+      "cancelled": "скасовано"
     },
     "aria": "Кабінет",
     "pointsEarned": "+{{count}} балів на рахунок MONO Club"

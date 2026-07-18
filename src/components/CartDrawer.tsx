@@ -6,6 +6,7 @@ import { formatMoney } from '../utils/money'
 import { buildOrderItems, submitOrder } from '../utils/orders'
 import useLocale from '../hooks/useLocale'
 import products from '../data/products.json'
+import { TELEGRAM_BOT } from '../config'
 
 type Stage = 'cart' | 'checkout' | 'done'
 
@@ -181,6 +182,16 @@ export default function CartDrawer() {
                 {orderId && <p className="text-sm tracking-widest text-paper/80">№ {orderId}</p>}
                 {pointsEarned > 0 && (
                   <p className="text-sm text-paper">{t('account.pointsEarned', { count: pointsEarned })}</p>
+                )}
+                {orderId && (
+                  <a
+                    href={`https://t.me/${TELEGRAM_BOT}?start=${orderId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="border border-white/20 px-6 py-3 uppercase tracking-widest text-xs hover:border-paper transition-colors"
+                  >
+                    {t('cart.telegramStatus')}
+                  </a>
                 )}
                 <p className="text-sm text-mist">{t('cart.demoNoteDone')}</p>
                 <button onClick={close} className="mt-4 border border-white/20 px-8 py-3 uppercase tracking-widest text-sm hover:border-paper transition-colors cursor-pointer">

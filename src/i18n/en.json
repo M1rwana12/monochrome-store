@@ -79,6 +79,7 @@
     "orderError": "Could not place the order — please try again.",
     "demoNote": "Demo store — the order is recorded, but no payment is taken.",
     "orderPlaced": "Order placed",
+    "telegramStatus": "Track in Telegram",
     "demoNoteDone": "This is a portfolio demo — nothing was charged.",
     "continue": "Continue",
     "close": "Close cart",

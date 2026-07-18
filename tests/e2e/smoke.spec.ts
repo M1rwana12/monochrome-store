@@ -97,6 +97,16 @@ test('admin page gates with token and lists orders', async ({ page }) => {
   await expect(page.getByText('Oversized Wool Coat (M) ×1')).toBeVisible()
 })
 
+test('account page shows login and register forms', async ({ page }) => {
+  await page.goto('/account')
+  await expect(page.getByRole('heading', { name: 'Кабінет' })).toBeVisible()
+  await expect(page.getByLabel('Email')).toBeVisible()
+  await expect(page.getByLabel('Пароль')).toBeVisible()
+  await page.getByRole('button', { name: 'Реєстрація' }).click()
+  await expect(page.getByLabel(/ім'я/i)).toBeVisible()
+  await expect(page.getByText('+100 балів')).toBeVisible()
+})
+
 test('unknown route shows branded 404', async ({ page }) => {
   await page.goto('/nowhere')
   await expect(page.getByText('404')).toBeVisible()

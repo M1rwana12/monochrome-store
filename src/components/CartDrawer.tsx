@@ -16,6 +16,7 @@ export default function CartDrawer() {
   const [sending, setSending] = useState(false)
   const [orderError, setOrderError] = useState(false)
   const [orderId, setOrderId] = useState<string | null>(null)
+  const [pointsEarned, setPointsEarned] = useState(0)
   const total = cartTotal(items, products)
   const asideRef = useRef<HTMLElement>(null)
 
@@ -74,8 +75,9 @@ export default function CartDrawer() {
     setSending(true)
     setOrderError(false)
     try {
-      const { id } = await submitOrder(customer, buildOrderItems(items, products))
-      setOrderId(id)
+      const result = await submitOrder(customer, buildOrderItems(items, products))
+      setOrderId(result.id)
+      setPointsEarned(result.pointsEarned ?? 0)
       clear()
       setStage('done')
     } catch {
@@ -177,6 +179,9 @@ export default function CartDrawer() {
               <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6 text-center">
                 <p className="font-display text-2xl tracking-widest uppercase">{t('cart.orderPlaced')}</p>
                 {orderId && <p className="text-sm tracking-widest text-paper/80">№ {orderId}</p>}
+                {pointsEarned > 0 && (
+                  <p className="text-sm text-paper">{t('account.pointsEarned', { count: pointsEarned })}</p>
+                )}
                 <p className="text-sm text-mist">{t('cart.demoNoteDone')}</p>
                 <button onClick={close} className="mt-4 border border-white/20 px-8 py-3 uppercase tracking-widest text-sm hover:border-paper transition-colors cursor-pointer">
                   {t('cart.continue')}

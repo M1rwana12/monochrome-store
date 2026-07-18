@@ -1,4 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useAuth } from './AuthContext'
+import { apiGetFavorites, apiPutFavorites } from '../utils/account'
 
 interface FavoritesContextValue {
   ids: string[]
@@ -20,14 +22,41 @@ function loadFavorites(): string[] {
 }
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
   const [ids, setIds] = useState<string[]>(loadFavorites)
+  const syncedFor = useRef<string | null>(null)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
   }, [ids])
 
+  // On login, merge the guest list with the account list once, then push the union
+  useEffect(() => {
+    if (!user) {
+      syncedFor.current = null
+      return
+    }
+    if (syncedFor.current === user.email) return
+    syncedFor.current = user.email
+    void (async () => {
+      try {
+        const server = await apiGetFavorites()
+        const merged = [...new Set([...server, ...loadFavorites()])]
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- runs after await, not synchronously
+        setIds(merged)
+        await apiPutFavorites(merged)
+      } catch {
+        // offline / server hiccup: keep the local list
+      }
+    })()
+  }, [user])
+
   const toggle = (id: string) =>
-    setIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]))
+    setIds(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      if (user) void apiPutFavorites(next).catch(() => {})
+      return next
+    })
 
   const value: FavoritesContextValue = {
     ids,

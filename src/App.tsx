@@ -12,6 +12,7 @@ const Catalog = lazy(() => import('./pages/Catalog'))
 const Product = lazy(() => import('./pages/Product'))
 const Lookbook = lazy(() => import('./pages/Lookbook'))
 const Favorites = lazy(() => import('./pages/Favorites'))
+const Account = lazy(() => import('./pages/Account'))
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -24,6 +25,7 @@ function SiteRoutes() {
       <Route path="product/:id" element={<Product />} />
       <Route path="lookbook" element={<Lookbook />} />
       <Route path="favorites" element={<Favorites />} />
+      <Route path="account" element={<Account />} />
       <Route path="admin" element={<Admin />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

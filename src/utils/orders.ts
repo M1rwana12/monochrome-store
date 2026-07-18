@@ -39,7 +39,7 @@ export async function submitOrder(customer: OrderCustomer, items: OrderItem[]) {
     body: JSON.stringify({ customer, items }),
   })
   if (!res.ok) throw new Error(`Order failed: ${res.status}`)
-  return (await res.json()) as { id: string }
+  return (await res.json()) as { id: string; pointsEarned?: number }
 }
 
 export async function fetchOrders(token: string) {

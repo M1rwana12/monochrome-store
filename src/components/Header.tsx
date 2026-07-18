@@ -44,6 +44,17 @@ export default function Header() {
             </svg>
             {savedCount > 0 && <span>{savedCount}</span>}
           </NavLink>
+          <NavLink
+            to={localePath('/account')}
+            aria-label={t('account.aria')}
+            className={({ isActive }) =>
+              `hover:opacity-60 transition-opacity ${isActive ? 'underline underline-offset-8' : ''}`
+            }
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5z" />
+            </svg>
+          </NavLink>
           <button
             onClick={openCart}
             className="hover:opacity-60 transition-opacity cursor-pointer uppercase tracking-wider sm:tracking-widest"

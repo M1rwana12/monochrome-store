@@ -106,5 +106,33 @@
   "notFound": {
     "text": "Сторінку не знайдено",
     "home": "На головну"
+  },
+  "account": {
+    "title": "Кабінет",
+    "login": "Вхід",
+    "register": "Реєстрація",
+    "name": "Ім'я",
+    "password": "Пароль",
+    "logout": "Вийти",
+    "points": "балів",
+    "myOrders": "Мої замовлення",
+    "noOrders": "Замовлень поки немає.",
+    "registerBonus": "+100 балів за реєстрацію в MONO Club",
+    "toNextLevel": "Ще {{amount}} покупок — і рівень {{level}}",
+    "errWrongCredentials": "Невірний email або пароль",
+    "errEmailTaken": "Такий email вже зареєстрований",
+    "errInvalid": "Перевір email і пароль (мінімум 8 символів)",
+    "errGeneric": "Щось пішло не так — спробуй ще раз",
+    "level": {
+      "silver": "Silver",
+      "graphite": "Graphite",
+      "black": "Black"
+    },
+    "status": {
+      "new": "нове",
+      "done": "виконано"
+    },
+    "aria": "Кабінет",
+    "pointsEarned": "+{{count}} балів на рахунок MONO Club"
   }
 }

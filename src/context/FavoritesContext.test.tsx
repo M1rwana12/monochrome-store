@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import type { ReactNode } from 'react'
+import { AuthProvider } from './AuthContext'
 import { FavoritesProvider, useFavorites } from './FavoritesContext'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <FavoritesProvider>{children}</FavoritesProvider>
+  <AuthProvider>
+    <FavoritesProvider>{children}</FavoritesProvider>
+  </AuthProvider>
 )
 
 beforeEach(() => localStorage.clear())

@@ -104,5 +104,33 @@
   "notFound": {
     "text": "Page not found",
     "home": "Back to home"
+  },
+  "account": {
+    "title": "Account",
+    "login": "Log in",
+    "register": "Sign up",
+    "name": "Name",
+    "password": "Password",
+    "logout": "Log out",
+    "points": "points",
+    "myOrders": "My orders",
+    "noOrders": "No orders yet.",
+    "registerBonus": "+100 points for joining MONO Club",
+    "toNextLevel": "Spend {{amount}} more to reach {{level}}",
+    "errWrongCredentials": "Wrong email or password",
+    "errEmailTaken": "This email is already registered",
+    "errInvalid": "Check your email and password (8+ characters)",
+    "errGeneric": "Something went wrong — please try again",
+    "level": {
+      "silver": "Silver",
+      "graphite": "Graphite",
+      "black": "Black"
+    },
+    "status": {
+      "new": "new",
+      "done": "done"
+    },
+    "aria": "Account",
+    "pointsEarned": "+{{count}} MONO Club points earned"
   }
 }

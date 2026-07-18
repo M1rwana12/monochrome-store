@@ -49,6 +49,11 @@ export default function ProductCard({ product }: { product: Product }) {
             {t('product.new')}
           </span>
         )}
+        {product.lowStock && (
+          <span className="absolute bottom-3 left-3 bg-ink/80 text-red-400/90 text-[10px] uppercase tracking-widest px-2 py-1">
+            {t('stock.low', { count: product.lowStock })}
+          </span>
+        )}
         <button
           onClick={e => {
             e.preventDefault()

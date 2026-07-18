@@ -46,11 +46,11 @@ export function buildOrderItems(cartItems: CartItem[], products: Product[]): Ord
   })
 }
 
-export async function submitOrder(customer: OrderCustomer, items: OrderItem[]) {
+export async function submitOrder(customer: OrderCustomer, items: OrderItem[], promoCode?: string | null) {
   const res = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ customer, items }),
+    body: JSON.stringify({ customer, items, promoCode: promoCode || undefined }),
   })
   if (!res.ok) throw new Error(`Order failed: ${res.status}`)
   return (await res.json()) as { id: string; pointsEarned?: number }
@@ -70,6 +70,14 @@ export async function setOrderStatus(token: string, id: string, status: OrderSta
     body: JSON.stringify({ status }),
   })
   if (!res.ok) throw new Error(`Update failed: ${res.status}`)
+}
+
+export async function validatePromo(code: string): Promise<number | null> {
+  const res = await fetch(`/api/promo/${encodeURIComponent(code)}`)
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error(`Promo failed: ${res.status}`)
+  const data = (await res.json()) as { rate: number }
+  return data.rate
 }
 
 export async function fetchCustomers(token: string) {

@@ -80,6 +80,11 @@
     "demoNote": "Demo store — the order is recorded, but no payment is taken.",
     "orderPlaced": "Order placed",
     "telegramStatus": "Track in Telegram",
+    "promoPlaceholder": "Promo code",
+    "apply": "Apply",
+    "promoInvalid": "Unknown promo code",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
     "demoNoteDone": "This is a portfolio demo — nothing was charged.",
     "continue": "Continue",
     "close": "Close cart",
@@ -105,6 +110,31 @@
   "notFound": {
     "text": "Page not found",
     "home": "Back to home"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count_one": "{{count}} review",
+    "count_other": "{{count}} reviews",
+    "empty": "No reviews yet — be the first.",
+    "write": "Write a review",
+    "loginToReview": "Log in to write a review",
+    "placeholder": "Share your impressions…",
+    "submit": "Submit",
+    "thanks": "Thank you for the review!",
+    "ratingAria": "Rating {{count}} of 5"
+  },
+  "sizeGuide": {
+    "button": "Size guide",
+    "title": "Size guide",
+    "size": "Size",
+    "chest": "Chest, cm",
+    "waist": "Waist, cm",
+    "hips": "Hips, cm",
+    "close": "Close"
+  },
+  "stock": {
+    "low_one": "Only {{count}} left",
+    "low_other": "Only {{count}} left"
   },
   "account": {
     "title": "Account",

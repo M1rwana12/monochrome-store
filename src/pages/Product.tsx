@@ -7,9 +7,13 @@ import { useCart } from '../context/CartContext'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import SkeletonImage from '../components/SkeletonImage'
+import Reviews from '../components/Reviews'
+import SizeGuide from '../components/SizeGuide'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import useLocale from '../hooks/useLocale'
 import { SITE_URL } from '../config'
+import { averageRating } from '../utils/reviews'
+import seedReviews from '../data/reviews.json'
 
 export default function Product() {
   const { id } = useParams<{ id: string }>()
@@ -62,6 +66,7 @@ export default function Product() {
     addItem(product.id, size)
   }
 
+  const productSeedReviews = (seedReviews as Record<string, { rating: number }[]>)[product.id] ?? []
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -69,6 +74,13 @@ export default function Product() {
     description: product.description[lang],
     image: product.images.map(src => `${SITE_URL}${src}`),
     brand: { '@type': 'Brand', name: 'MONOCHROME' },
+    ...(productSeedReviews.length && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: averageRating(productSeedReviews),
+        reviewCount: productSeedReviews.length,
+      },
+    }),
     offers: {
       '@type': 'Offer',
       url: `${SITE_URL}${localePath(`/product/${product.id}`)}`,
@@ -119,7 +131,10 @@ export default function Product() {
             <p className="mt-6 text-sm leading-relaxed text-paper/80 max-w-md">{product.description[lang]}</p>
 
             <div className="mt-8">
-              <p className="text-xs uppercase tracking-widest text-mist mb-3">{t('product.size')}</p>
+              <div className="flex items-baseline justify-between mb-3 max-w-md">
+                <p className="text-xs uppercase tracking-widest text-mist">{t('product.size')}</p>
+                {product.sizes.length > 1 && <SizeGuide />}
+              </div>
               <div className="flex gap-2 flex-wrap">
                 {product.sizes.map(s => (
                   <button
@@ -134,6 +149,11 @@ export default function Product() {
                 ))}
               </div>
               {error && <p className="mt-2 text-xs text-red-400 uppercase tracking-widest">{t('product.selectSize')}</p>}
+              {product.lowStock && (
+                <p className="mt-3 text-[11px] uppercase tracking-widest text-red-400/90">
+                  {t('stock.low', { count: product.lowStock })}
+                </p>
+              )}
             </div>
 
             <button onClick={add} className="mt-8 w-full sm:w-80 bg-paper text-ink py-4 uppercase tracking-[0.3em] text-xs hover:bg-mist transition-colors cursor-pointer">
@@ -142,6 +162,8 @@ export default function Product() {
           </Reveal>
         </div>
       </div>
+
+      <Reviews productId={product.id} />
 
       <section className="mt-24">
         <Reveal>

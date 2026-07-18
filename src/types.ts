@@ -14,6 +14,7 @@ export interface Product {
   isNew: boolean
   tags?: string[]
   hoverVideo?: string
+  lowStock?: number
 }
 
 export interface CartItem {

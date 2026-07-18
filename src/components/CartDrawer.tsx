@@ -3,7 +3,7 @@ import { AnimatePresence, m } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { cartTotal } from '../utils/catalog'
 import { formatMoney } from '../utils/money'
-import { buildOrderItems, submitOrder } from '../utils/orders'
+import { buildOrderItems, submitOrder, validatePromo } from '../utils/orders'
 import useLocale from '../hooks/useLocale'
 import products from '../data/products.json'
 import { TELEGRAM_BOT } from '../config'
@@ -18,8 +18,26 @@ export default function CartDrawer() {
   const [orderError, setOrderError] = useState(false)
   const [orderId, setOrderId] = useState<string | null>(null)
   const [pointsEarned, setPointsEarned] = useState(0)
-  const total = cartTotal(items, products)
+  const [promoInput, setPromoInput] = useState('')
+  const [promo, setPromo] = useState<{ code: string; rate: number } | null>(null)
+  const [promoError, setPromoError] = useState(false)
+  const subtotal = cartTotal(items, products)
+  const discount = promo ? Math.round(subtotal * promo.rate) : 0
+  const total = subtotal - discount
   const asideRef = useRef<HTMLElement>(null)
+
+  const applyPromo = async () => {
+    const code = promoInput.trim().toUpperCase()
+    if (!code) return
+    setPromoError(false)
+    try {
+      const rate = await validatePromo(code)
+      if (rate === null) setPromoError(true)
+      else setPromo({ code, rate })
+    } catch {
+      setPromoError(true)
+    }
+  }
 
   const FIELDS = [
     { name: 'name', label: t('cart.name'), type: 'text' },
@@ -76,7 +94,7 @@ export default function CartDrawer() {
     setSending(true)
     setOrderError(false)
     try {
-      const result = await submitOrder(customer, buildOrderItems(items, products))
+      const result = await submitOrder(customer, buildOrderItems(items, products), promo?.code)
       setOrderId(result.id)
       setPointsEarned(result.pointsEarned ?? 0)
       clear()
@@ -137,6 +155,33 @@ export default function CartDrawer() {
                 </div>
                 {items.length > 0 && (
                   <div className="p-6 border-t border-white/10 space-y-4">
+                    <div className="flex gap-2">
+                      <input
+                        value={promoInput}
+                        onChange={e => { setPromoInput(e.target.value); setPromoError(false) }}
+                        placeholder={t('cart.promoPlaceholder')}
+                        aria-label={t('cart.promoPlaceholder')}
+                        className="flex-1 bg-transparent border border-white/20 px-3 py-2 text-sm uppercase focus:border-paper outline-none placeholder:normal-case placeholder:text-mist/60"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => void applyPromo()}
+                        className="border border-white/20 px-4 text-[11px] uppercase tracking-widest hover:border-paper transition-colors cursor-pointer"
+                      >
+                        {t('cart.apply')}
+                      </button>
+                    </div>
+                    {promoError && <p className="text-xs text-red-400 uppercase tracking-widest">{t('cart.promoInvalid')}</p>}
+                    {promo && (
+                      <>
+                        <div className="flex justify-between text-xs uppercase tracking-widest text-mist">
+                          <span>{t('cart.subtotal')}</span><span>{formatMoney(subtotal, lang)}</span>
+                        </div>
+                        <div className="flex justify-between text-xs uppercase tracking-widest text-mist">
+                          <span>{t('cart.discount')} ({promo.code})</span><span>−{formatMoney(discount, lang)}</span>
+                        </div>
+                      </>
+                    )}
                     <div className="flex justify-between text-sm uppercase tracking-widest">
                       <span>{t('cart.total')}</span><span>{formatMoney(total, lang)}</span>
                     </div>

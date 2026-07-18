@@ -123,6 +123,31 @@ test('admin: dashboard KPIs, orders tab and customers tab', async ({ page }) => 
   await expect(page.getByText('465 pts')).toBeVisible()
 })
 
+test('product page shows seed reviews and size guide', async ({ page }) => {
+  await page.route('**/api/products/*/reviews', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
+  )
+  await page.goto('/product/p01')
+  await expect(page.getByRole('heading', { name: 'Відгуки' })).toBeVisible()
+  await expect(page.getByText('Пальто неймовірне', { exact: false })).toBeVisible()
+  await page.getByRole('button', { name: 'Таблиця розмірів' }).click()
+  await expect(page.getByRole('dialog', { name: 'Таблиця розмірів' })).toBeVisible()
+  await expect(page.getByText('96–100').first()).toBeVisible()
+  await page.keyboard.press('Escape')
+})
+
+test('promo code applies a discount in the cart', async ({ page }) => {
+  await page.route('**/api/promo/MONO10', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"rate":0.1}' }),
+  )
+  await page.goto('/product/p10')
+  await page.getByRole('button', { name: /додати в кошик/i }).click()
+  const dialog = page.getByRole('dialog', { name: 'Кошик покупок' })
+  await dialog.getByLabel('Промокод').fill('MONO10')
+  await dialog.getByRole('button', { name: 'Застосувати' }).click()
+  await expect(dialog.getByText('Знижка (MONO10)')).toBeVisible()
+})
+
 test('account page shows login and register forms', async ({ page }) => {
   await page.goto('/account')
   await expect(page.getByRole('heading', { name: 'Кабінет' })).toBeVisible()

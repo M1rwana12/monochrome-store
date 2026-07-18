@@ -65,6 +65,15 @@ if (useFirestore) {
       const snap = await users.limit(200).get()
       return snap.docs.map(d => d.data())
     },
+    async addReview(review) {
+      await db.collection('reviews').doc(review.id).set(review)
+    },
+    async listReviews(productId) {
+      const snap = await db.collection('reviews').where('productId', '==', productId).limit(50).get()
+      return snap.docs
+        .map(d => d.data())
+        .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    },
     async getUserByEmail(email) {
       const snap = await users.where('email', '==', email).limit(1).get()
       return snap.empty ? null : snap.docs[0].data()
@@ -91,7 +100,7 @@ if (useFirestore) {
   }
   console.log('store: Firestore')
 } else {
-  const mem = { orders: [], users: new Map(), bonusTx: [] }
+  const mem = { orders: [], users: new Map(), bonusTx: [], reviews: [] }
   store = {
     async addOrder(order) {
       mem.orders.unshift(order)
@@ -117,6 +126,12 @@ if (useFirestore) {
     },
     async listUsers() {
       return [...mem.users.values()]
+    },
+    async addReview(review) {
+      mem.reviews.unshift(review)
+    },
+    async listReviews(productId) {
+      return mem.reviews.filter(r => r.productId === productId)
     },
     async getUserByEmail(email) {
       for (const user of mem.users.values()) if (user.email === email) return user
@@ -144,6 +159,8 @@ if (useFirestore) {
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ORDER_STATUSES = ['new', 'confirmed', 'shipped', 'done', 'cancelled']
+// Demo promo codes: code -> discount rate
+const PROMO_CODES = { MONO10: 0.1, WELCOME15: 0.15 }
 
 // Demo-store trust model: prices come from the client and are only sanity-checked.
 // A real shop would price items server-side.
@@ -164,8 +181,13 @@ function parseOrder(body) {
     price: Math.min(Math.max(Number(i?.price) || 0, 0), 100000),
   }))
   if (items.some(i => !i.id || !i.name)) return null
-  const total = items.reduce((sum, i) => sum + i.price * i.qty, 0)
-  return { customer, items, total }
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+  const promoCode = str(body.promoCode, 30).toUpperCase() || null
+  const discountRate = promoCode ? (PROMO_CODES[promoCode] ?? null) : 0
+  if (discountRate === null) return { invalidPromo: true }
+  const discountUsd = Math.round(subtotal * discountRate)
+  const total = subtotal - discountUsd
+  return { customer, items, subtotal, promoCode, discountUsd, total }
 }
 
 async function tg(method, payload) {
@@ -377,9 +399,51 @@ app.put('/api/me/favorites', requireUser, async (req, res) => {
 
 // --- orders ---
 
+// --- reviews ---
+
+app.get('/api/products/:id/reviews', async (req, res) => {
+  try {
+    res.json(await store.listReviews(str(req.params.id, 20)))
+  } catch (err) {
+    console.error('reviews list failed:', err)
+    res.status(500).json({ error: 'storage failed' })
+  }
+})
+
+app.post('/api/products/:id/reviews', requireUser, async (req, res) => {
+  const rating = Number.parseInt(req.body?.rating, 10)
+  const text = str(req.body?.text, 500)
+  if (!(rating >= 1 && rating <= 5) || !text) return res.status(400).json({ error: 'invalid review' })
+  try {
+    const user = await store.getUser(req.uid)
+    if (!user) return res.status(401).json({ error: 'unauthorized' })
+    const review = {
+      id: crypto.randomBytes(8).toString('hex'),
+      productId: str(req.params.id, 20),
+      uid: req.uid,
+      name: user.name || user.email.split('@')[0],
+      rating,
+      text,
+      createdAt: new Date().toISOString(),
+    }
+    await store.addReview(review)
+    res.status(201).json(review)
+  } catch (err) {
+    console.error('review add failed:', err)
+    res.status(500).json({ error: 'storage failed' })
+  }
+})
+
+app.get('/api/promo/:code', (req, res) => {
+  const rate = PROMO_CODES[str(req.params.code, 30).toUpperCase()]
+  if (!rate) return res.status(404).json({ error: 'unknown code' })
+  res.json({ rate })
+})
+
 app.post('/api/orders', async (req, res) => {
   const parsed = parseOrder(req.body)
   if (!parsed) return res.status(400).json({ error: 'invalid order' })
+  if (parsed.invalidPromo) return res.status(400).json({ error: 'invalid promo' })
   const uid = sessionUid(req)
   const createdAt = new Date().toISOString()
   const order = {
